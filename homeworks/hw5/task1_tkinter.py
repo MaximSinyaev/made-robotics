@@ -1,63 +1,30 @@
 from tkinter import *
 import math
-from sympy import Point, Polygon
 
-'''================= Your classes and methods ================='''
-
-# These functions will help you to check collisions with obstacles
-
-def rotate(points, angle, center):
-    angle = math.radians(angle)
-    cos_val = math.cos(angle)
-    sin_val = math.sin(angle)
-    cx, cy = center
-    new_points = []
-
-    for x_old, y_old in points:
-        x_old -= cx
-        y_old -= cy
-        x_new = x_old * cos_val - y_old * sin_val
-        y_new = x_old * sin_val + y_old * cos_val
-        new_points.append((x_new+cx, y_new+cy))
-
-    return new_points
-
-def get_polygon_from_position(position) :
-    x,y,yaw = position
-    points = [(x - 50, y - 100), (x + 50, y - 100), (x + 50, y + 100), (x - 50, y + 100)] 
-    new_points = rotate(points, yaw * 180 / math.pi, (x,y))
-    return Polygon(*list(map(Point, new_points)))
-
-def get_polygon_from_obstacle(obstacle) :
-    points = [(obstacle[0], obstacle[1]), (obstacle[2], obstacle[3]), (obstacle[4], obstacle[5]), (obstacle[6], obstacle[7])] 
-    return Polygon(*list(map(Point, points)))
-
-def collides(position, obstacle) :
-    return get_polygon_from_position(position).intersection(get_polygon_from_obstacle(obstacle))
-        
+'''=================Yours Methods================='''
+    
 
 class Window():
-        
-    '''================= Your Main Function ================='''
-    
+
+    def __init__(self):
+        self.root = Tk()
+        self.root.title("")
+        self.width  = self.root.winfo_screenwidth()
+        self.height = self.root.winfo_screenheight()
+        self.root.geometry(f'{self.width}x{self.height}')
+        self.canvas = Canvas(self.root, bg="#777777", height=self.height, width=self.width)
+        self.canvas.pack()
+
     def go(self, event):
-    
-        # Write your code here
+        #Write your code here
                 
-        print("Start position:", self.get_start_position())
-        print("Target position:", self.get_target_position()) 
-        print("Obstacles:", self.get_obstacles())
+        #print("Start position:", self.get_start_position())
+        #print("Target position:", self.get_target_position()) 
+        #print("Obstacles:", self.get_obstacles())
+        return True
+   
         
-        # Example of collision calculation
-        
-        number_of_collisions = 0
-        for obstacle in self.get_obstacles() :
-            if collides(self.get_start_position(), obstacle) :
-                number_of_collisions += 1
-        print("Start position collides with", number_of_collisions, "obstacles")
-        
-        
-    '''================= Interface Methods ================='''
+    '''================= Task Interface Methods ================='''
     
     def get_obstacles(self) :
         obstacles = []
@@ -65,8 +32,7 @@ class Window():
         for i in potential_obstacles:
             if (i > 2) :
                 coords = self.canvas.coords(i)
-                if coords:
-                    obstacles.append(coords)
+                obstacles.append(coords)
         return obstacles
             
             
@@ -298,6 +264,7 @@ class Window():
         self.canvas.tag_bind(id, "<Button-3>", self.set_id_block)
         self.canvas.tag_bind(id, "<B1-Motion>", self.motion_block)
         self.canvas.tag_bind(id, "<B3-Motion>", self.rotate_block)
+        
 
     def create_button_go(self):
         button = Button(
@@ -321,17 +288,8 @@ class Window():
         root.bind("<Delete>", self.delete_block)
 
         root.mainloop()
-        
-    def __init__(self):
-        self.root = Tk()
-        self.root.title("")
-        self.width  = self.root.winfo_screenwidth()
-        self.height = self.root.winfo_screenheight()
-        self.root.geometry(f'{self.width}x{self.height}')
-        self.canvas = Canvas(self.root, bg="#777777", height=self.height, width=self.width)
-        self.canvas.pack()
-        # self.points = [0, 500, 500/2, 0, 500, 500]
-    
+
+
 if __name__ == "__main__":
     run = Window()
     run.run()
